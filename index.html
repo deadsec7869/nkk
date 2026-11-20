@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Whisper at MediArm</title>
+<style>
+:root{--bg:#F4F1EA;--tx:#1B2430;--card:#FBF9F4;--ac:#E8A33D;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1B2430;--tx:#F4F1EA;--card:#243040}}
+:root[data-theme="dark"]{--bg:#1B2430;--tx:#F4F1EA;--card:#243040}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+h1{font-family:'Space Grotesk',Inter,sans-serif;font-size:22px;margin:4px 0 12px}
+#stage{position:relative;border-radius:18px;overflow:hidden;min-height:440px;display:flex;flex-direction:column;justify-content:space-between;transition:background 1s;padding:14px 10px 10px;color:#1B2430}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.title{font-weight:700;font-size:17px;background:#fffc;padding:6px 12px;border-radius:20px;animation:drop .6s both}
+.days{font-weight:700;font-size:14px;background:#1B2430;color:#fff;padding:6px 12px;border-radius:20px;animation:drop .6s .3s both}
+.days.red{background:#C0392B}
+.row{display:flex;align-items:flex-end;justify-content:center;gap:4px;margin:10px 0}
+.p{flex:1;max-width:170px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;animation:rise .6s both}
+.bub{background:#fff;border-radius:14px;padding:8px 9px;font-size:12.5px;line-height:1.3;text-align:center;margin-bottom:8px;min-height:20px;position:relative;box-shadow:0 2px 6px #0002;animation:pop .5s both}
+.bub:after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:#fff}
+.bub.empty{visibility:hidden}
+.fig{width:88px;max-width:100%;filter:drop-shadow(0 6px 4px #0003);animation:bob 1.6s ease-in-out infinite}
+.fig.sad{animation:shake .5s infinite}
+.office{position:absolute;inset:0;z-index:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 440' preserveAspectRatio='xMidYMid slice'%3E%3Crect x='30' y='70' width='110' height='120' rx='6' fill='%23fff' fill-opacity='.55' stroke='%23fff' stroke-opacity='.8' stroke-width='6'/%3E%3Cpath d='M85 70V190M30 130H140' stroke='%23fff' stroke-opacity='.8' stroke-width='4'/%3E%3Crect x='260' y='70' width='110' height='120' rx='6' fill='%23fff' fill-opacity='.55' stroke='%23fff' stroke-opacity='.8' stroke-width='6'/%3E%3Cpath d='M315 70V190M260 130H370' stroke='%23fff' stroke-opacity='.8' stroke-width='4'/%3E%3Ccircle cx='200' cy='100' r='26' fill='%23fff' fill-opacity='.7' stroke='%231B2430' stroke-opacity='.5' stroke-width='4'/%3E%3Cpath d='M200 100V82M200 100L212 106' stroke='%231B2430' stroke-opacity='.7' stroke-width='3'/%3E%3Crect y='322' width='400' height='118' fill='%23000' fill-opacity='.14'/%3E%3Crect y='316' width='400' height='8' fill='%23000' fill-opacity='.22'/%3E%3C/svg%3E") center/cover}.top,.row,.cap,.rules,.end{position:relative;z-index:1}
+.nm{font-size:12px;font-weight:700;margin-top:4px}.rl{font-size:10.5px;opacity:.75}
+.cap{background:#1B2430e6;color:#fff;border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.4;animation:fade .8s .2s both}
+.rules{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.rule{background:#fff;border-radius:12px;padding:10px 14px;font-weight:600;font-size:15px;animation:slide .6s both}
+.end{font-family:'Space Grotesk',Inter,sans-serif;font-size:26px;font-weight:700;text-align:center;animation:pop .8s 3s both;margin:6px 0}
+#bar{height:5px;background:#8883;border-radius:3px;margin:12px 0 8px;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:var(--ac)}
+.ctl{display:flex;gap:8px;justify-content:center}
+button{font:inherit;font-weight:600;padding:10px 16px;border-radius:10px;border:0;background:var(--ac);color:#1B2430;cursor:pointer}
+@keyframes rise{from{opacity:0;transform:translateY(30px)}}
+@keyframes pop{from{opacity:0;transform:scale(.4)}}
+@keyframes fade{from{opacity:0}}
+@keyframes drop{from{opacity:0;transform:translateY(-20px)}}
+@keyframes slide{from{opacity:0;transform:translateX(-40px)}}
+@keyframes bob{50%{transform:translateY(-5px)}}
+@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes fill{to{width:100%}}
+</style></head><body><div class="wrap">
+<h1>The Whisper at MediArm</h1>
+<div id="stage"></div>
+<div id="bar"><i></i></div>
+<div class="ctl"><button id="pv">◀</button><button id="pp">Pause</button><button id="nx">▶</button><button id="rp">Replay</button></div>
+</div>
+<script>
+var P={asha:{n:'Asha',r:'Marketing',c:'#E8A33D'},ravi:{n:'Ravi',r:'Production',c:'#3A7CA5'},kiran:{n:'Kiran',r:'RnD',c:'#7B6CD9'},meena:{n:'Meena',r:'Finance',c:'#3FA37A'},md:{n:'MD',r:'Managing Director',c:'#1B2430'}};
+var M={ok:'M23 28 Q30 34 37 28',worry:'M23 33 Q30 26 37 33',shock:'M27 29 a3 4 0 1 0 6 0 a3 4 0 1 0 -6 0'};
+function fig(c,m){return '<svg class="fig '+(m=='worry'?'sad':'')+'" viewBox="0 0 60 90"><rect x="14" y="40" width="32" height="40" rx="12" fill="'+c+'"/><rect x="6" y="44" width="9" height="26" rx="4" fill="'+c+'"/><rect x="45" y="44" width="9" height="26" rx="4" fill="'+c+'"/><circle cx="30" cy="22" r="16" fill="#F1C27D"/><path d="M14 20 Q30 -4 46 20 Q30 8 14 20Z" fill="#3b2a20"/><circle cx="24" cy="21" r="2" fill="#222"/><circle cx="36" cy="21" r="2" fill="#222"/><path d="'+M[m||'ok']+'" stroke="#222" stroke-width="2" fill="'+(m=='shock'?'#222':'none')+'" stroke-linecap="round"/>'+(m=='worry'?'<path d="M47 12 q3 5 0 8 q-3 -3 0 -8z" fill="#6cf"/>':'')+'</svg>'}
+var S=[
+{t:'MediArm',bg:'#CFE6F5',d:'Demo in 30 days',cap:'MediArm builds a robotic arm for surgeons. Four teams, one big goal: a safe demo in 30 days.',w:[['asha','ok','Hospitals are excited!'],['ravi','ok','Arm is assembling well.'],['kiran','ok','Safety tests tomorrow.'],['meena','ok','Let’s review the budget.']]},
+{t:'The whisper',bg:'#F5E6C8',d:'Demo in 29 days',cap:'Ravi overhears only part of a sentence. He doesn’t ask. He assumes.',w:[['asha','ok',''],['ravi','shock','“Cutting the budget”? They’re shutting it down!'],['kiran','ok',''],['meena','ok','Reviewing numbers…']]},
+{t:'It spreads',bg:'#F7D9C4',d:'Demo in 27 days',cap:'Ravi tells Asha. Asha tells Kiran. Nobody checks if it’s true.',w:[['asha','shock','Ravi says the project is ending!'],['ravi','worry','I heard it myself!'],['kiran','shock','Asha says we’re shut down?!'],['meena','ok','Why is everyone avoiding me?']]},
+{t:'The damage',bg:'#F2B8B0',d:'Demo in 12 days',red:1,cap:'Safety tests skipped. Hospital invites stopped. Production slows down. All from one rumour.',w:[['asha','worry','No point inviting hospitals.'],['ravi','worry','Why hurry? It’s ending.'],['kiran','worry','Skip the safety test.'],['meena','worry','What is going on?']]},
+{t:'The MD steps in',bg:'#D8D4F2',d:'Demo in 12 days',red:1,cap:'The MD asks one calm question and follows the trail back to a single overheard sentence.',w:[['md','ok','Who heard this, and from whom?'],['asha','worry','From Ravi…'],['ravi','worry','I overheard Meena…'],['kiran','worry','I didn’t check.']]},
+{t:'The truth',bg:'#CDEBD8',d:'Demo in 12 days',cap:'Finance was only adding more funds for safety testing. The rumour was completely false.',w:[['meena','ok','I was adding MORE budget for safety!'],['md','ok','Two weeks and our trust, lost to a whisper.'],['ravi','shock','Oh no. I should have asked.'],['asha','shock','We all should have.']]},
+{t:'The lesson',bg:'#1B2430',d:'',end:1,cap:'In a company building surgical robots, one wrong whisper could cost far more.',w:[]}
+];
+var R=['Talk to the person, not about the person','Take unresolved issues to your manager','Verify before you share','Keep personal matters private'];
+var L={asha:{s:'#C68642',h:'#1a1210',t:'#E8A33D',hs:'long'},ravi:{s:'#E0AC69',h:'#2a1b14',t:'#3A7CA5',hs:'short'},kiran:{s:'#8D5524',h:'#15100d',t:'#f4f1ea',i:'#7B6CD9',hs:'curly',g:1},meena:{s:'#F1C27D',h:'#3b2417',t:'#3FA37A',hs:'bun'},md:{s:'#D9A066',h:'#8d8d8d',t:'#1B2430',hs:'short'}};
+function fig(id,m){var c=L[id],w=m=='worry',k=m=='shock',h=c.h,s=c.s,x='';
+if(c.hs=='long')x+='<path d="M21 38Q20 12 40 13Q60 12 59 38L62 82L18 82Z" fill="'+h+'"/>';
+x+='<path d="M8 130Q8 82 28 74L52 74Q72 82 72 130Z" fill="'+c.t+'"/>';
+if(id=='kiran')x+='<path d="M32 74L40 98L48 74Z" fill="'+c.i+'"/>';
+if(id=='asha'||id=='meena'||id=='md')x+='<path d="M31 74L40 90L49 74Z" fill="#f4f1ea"/>';
+if(id=='ravi')x+='<path d="M12 130L20 90L30 78L33 130ZM68 130L60 90L50 78L47 130Z" fill="#F28C28"/><path d="M15 112H31M65 112H49" stroke="#fff" stroke-width="3"/>';
+if(id=='md')x+='<path d="M37 78L43 78L45 104L40 110L35 104Z" fill="#E8A33D"/>';
+if(id=='meena')x+='<rect x="45" y="90" width="10" height="13" rx="1.5" fill="#fff" stroke="#999"/><rect x="47" y="92" width="6" height="4" fill="#3A7CA5"/>';
+x+='<rect x="34" y="58" width="12" height="18" rx="4" fill="'+s+'"/><path d="M34 70Q40 76 46 70V76H34Z" fill="#000" opacity=".15"/>';
+x+='<circle cx="23" cy="42" r="3.6" fill="'+s+'"/><circle cx="57" cy="42" r="3.6" fill="'+s+'"/><ellipse cx="40" cy="40" rx="17" ry="20" fill="'+s+'"/><path d="M53 24Q60 42 47 59Q58 50 57 36Z" fill="#000" opacity=".1"/>';
+if(c.hs=='curly')x+='<circle cx="25" cy="27" r="8" fill="'+h+'"/><circle cx="33" cy="17" r="9" fill="'+h+'"/><circle cx="47" cy="17" r="9" fill="'+h+'"/><circle cx="55" cy="27" r="8" fill="'+h+'"/><circle cx="40" cy="14" r="8" fill="'+h+'"/>';
+else{if(c.hs=='bun')x+='<circle cx="40" cy="9" r="8" fill="'+h+'"/>';x+='<path d="M22 38Q20 14 40 15Q60 14 58 38Q56 26 46 24Q36 28 24 32Z" fill="'+h+'"/>'}
+var ry=k?3.8:2.8;
+x+='<ellipse cx="33" cy="41" rx="3.8" ry="'+ry+'" fill="#fff"/><ellipse cx="47" cy="41" rx="3.8" ry="'+ry+'" fill="#fff"/><circle cx="33.5" cy="41.4" r="'+(k?1.4:2)+'" fill="#2b1a10"/><circle cx="47.5" cy="41.4" r="'+(k?1.4:2)+'" fill="#2b1a10"/><circle cx="34.2" cy="40.6" r=".7" fill="#fff"/><circle cx="48.2" cy="40.6" r=".7" fill="#fff"/>';
+var b=w?['M28 35L37 32','M43 32L52 35']:k?['M28 32Q33 28 38 31','M42 31Q47 28 52 32']:['M28 34Q33 31 38 34','M42 34Q47 31 52 34'];
+x+='<path d="'+b[0]+'" stroke="'+h+'" stroke-width="2" fill="none" stroke-linecap="round"/><path d="'+b[1]+'" stroke="'+h+'" stroke-width="2" fill="none" stroke-linecap="round"/>';
+if(c.g)x+='<rect x="27" y="36" width="12" height="10" rx="4" fill="none" stroke="#222" stroke-width="1.4"/><rect x="41" y="36" width="12" height="10" rx="4" fill="none" stroke="#222" stroke-width="1.4"/><path d="M39 40H41" stroke="#222"/>';
+x+='<path d="M40 43Q37 50 40 51Q42 52 43 50" stroke="#000" stroke-opacity=".3" fill="none" stroke-width="1.2"/><circle cx="29" cy="49" r="3" fill="#e57373" opacity=".25"/><circle cx="51" cy="49" r="3" fill="#e57373" opacity=".25"/>';
+x+=k?'<ellipse cx="40" cy="55" rx="3" ry="4" fill="#5a1f1f"/>':w?'<path d="M34 57Q40 52 46 57" stroke="#7a2e2e" stroke-width="1.8" fill="none" stroke-linecap="round"/>':'<path d="M33 53Q40 60 47 53" stroke="#7a2e2e" stroke-width="1.8" fill="none" stroke-linecap="round"/>';
+if(w)x+='<path d="M62 24q4 6 0 10q-4-4 0-10z" fill="#6cc4ff"/>';
+return '<svg class="fig'+(w?' sad':'')+'" viewBox="0 0 80 130">'+x+'</svg>'}
+var i=0,T,on=true,D=7000,st=document.getElementById('stage'),bar=document.querySelector('#bar i');
+function show(n){clearTimeout(T);i=(n+S.length)%S.length;var s=S[i],h='';
+st.style.background=s.bg;st.style.color=s.end?'#F4F1EA':'#1B2430';
+h+=(s.end?'':'<div class="office"></div>')+'<div class="top"><div class="title">'+(i+1)+'/'+S.length+' · '+s.t+'</div>'+(s.d?'<div class="days'+(s.red?' red':'')+'">'+s.d+'</div>':'')+'</div>';
+if(s.end){h+='<div class="rules">'+R.map(function(r,k){return '<div class="rule" style="animation-delay:'+(.4+k*.6)+'s;color:#1B2430">'+(k+1)+'. '+r+'</div>'}).join('')+'</div><div class="end">Speak directly. Respect always. No gossip.</div>'}
+else{h+='<div class="row">'+s.w.map(function(w,k){var p=P[w[0]];return '<div class="p" style="animation-delay:'+k*.15+'s"><div class="bub'+(w[2]?'':' empty')+'" style="animation-delay:'+(.8+k*.9)+'s">'+(w[2]||'.')+'</div>'+fig(w[0],w[1])+'<div class="nm">'+p.n+'</div><div class="rl">'+p.r+'</div></div>'}).join('')+'</div>'}
+h+='<div class="cap">'+s.cap+'</div>';st.innerHTML=h;
+bar.style.animation='none';bar.offsetWidth;bar.style.animation=on?'fill '+D+'ms linear forwards':'none';
+if(on&&i<S.length-1)T=setTimeout(function(){show(i+1)},D);
+if(on&&i==S.length-1){document.getElementById('pp').textContent='Pause'}}
+document.getElementById('pv').onclick=function(){show(i-1)};
+document.getElementById('nx').onclick=function(){show(i+1)};
+document.getElementById('rp').onclick=function(){on=true;document.getElementById('pp').textContent='Pause';show(0)};
+document.getElementById('pp').onclick=function(){on=!on;this.textContent=on?'Pause':'Play';show(i)};
+show(0);
+</script></body></html>
